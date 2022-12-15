@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/doniantoro/gogix/helper"
-	http "github.com/doniantoro/gogix/http"
+	"github.com/doniantoro/gogix/v2/helper"
+	http "github.com/doniantoro/gogix/v2/http"
 )
 
 // go mod init github.com/doniantoro/gogix

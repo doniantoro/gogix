@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/doniantoro/gogix/domain"
+	"github.com/doniantoro/gogix/v2/domain"
 )
 
 var ErrPayload = errors.New("Invalid request payload")
