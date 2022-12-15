@@ -1,4 +1,4 @@
-package http
+package Newhttp
 
 import (
 	"bytes"
@@ -10,9 +10,7 @@ import (
 )
 
 type Client struct {
-	client     *http.Client
-	timeout    time.Duration
-	retryCount int
+	client *http.Client
 }
 
 const (
@@ -22,20 +20,31 @@ const (
 	SSL                bool = true
 )
 
+// Header is a function that will response http.Header , this function will set header for http
 func Header() http.Header {
 	return http.Header{}
 }
+
+// NewClient is a function of default http client with add timeout
+// This function will return Struct Client that containt http client
 func NewClient(timeout int) *Client {
 	client := &http.Client{Timeout: time.Duration(timeout) * time.Second}
 
 	return &Client{client: client}
 }
 
+// This function is custom http client , you can add transport , proxy or etc
+// This function will return custom http client , this function will return custom http
 func CustomClient(client *http.Client) *Client {
 
 	return &Client{client: client}
 }
 
+// This function is custom http client with method get  , with parameter url and header
+// This function will return :
+// - data (result of endpoint that has  byte type that can unmarshal with the struct)
+// - Status code (status code of response end point that has type int)
+// - Error (Error response endpoint that has type error)
 func (c *Client) Get(url string, headers http.Header) ([]byte, int, error) {
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -47,6 +56,11 @@ func (c *Client) Get(url string, headers http.Header) ([]byte, int, error) {
 	return c.Do(request)
 }
 
+// This function is custom http client with method post  , with parameter url ,header and body payload
+// This function will return :
+// - data (result of endpoint that has  byte type that can unmarshal with the struct)
+// - Status code (status code of response end point that has type int)
+// - Error (Error response endpoint that has type error)
 func (c *Client) Post(url string, headers http.Header, payload interface{}) ([]byte, int, error) {
 
 	reqBody, err := json.Marshal(&payload)
@@ -59,6 +73,12 @@ func (c *Client) Post(url string, headers http.Header, payload interface{}) ([]b
 
 	return c.Do(request)
 }
+
+// This function is custom http client with method put  , with parameter url ,header and body payload
+// This function will return :
+// - data (result of endpoint that has  byte type that can unmarshal with the struct)
+// - Status code (status code of response end point that has type int)
+// - Error (Error response endpoint that has type error)
 func (c *Client) Put(url string, headers http.Header, payload interface{}) ([]byte, int, error) {
 
 	reqBody, err := json.Marshal(&payload)
@@ -70,6 +90,12 @@ func (c *Client) Put(url string, headers http.Header, payload interface{}) ([]by
 	request.Header = headers
 	return c.Do(request)
 }
+
+// This function is custom http client with method put  , with parameter url ,header and body payload
+// This function will return :
+// - data (result of endpoint that has  byte type that can unmarshal with the struct)
+// - Status code (status code of response end point that has type int)
+// - Error (Error response endpoint that has type error)
 func (c *Client) Patch(url string, headers http.Header, payload interface{}) ([]byte, int, error) {
 
 	reqBody, err := json.Marshal(&payload)
@@ -82,6 +108,12 @@ func (c *Client) Patch(url string, headers http.Header, payload interface{}) ([]
 
 	return c.Do(request)
 }
+
+// This function is custom http client with method put  , with parameter url ,header and body payload
+// This function will return :
+// - data (result of endpoint that has  byte type that can unmarshal with the struct)
+// - Status code (status code of response end point that has type int)
+// - Error (Error response endpoint that has type error)
 func (c *Client) Delete(url string, headers http.Header) ([]byte, int, error) {
 	request, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {

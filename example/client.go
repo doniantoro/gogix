@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/doniantoro/gogix/helper"
+	"github.com/doniantoro/gogix/NewHelper"
 	gogix "github.com/doniantoro/gogix/http"
 	"github.com/gorilla/mux"
 )
@@ -42,13 +42,12 @@ func ExampleGet() {
 	header.Set("Content-Type", "application/json")
 	response, code, err := httpClient.Get(baseURL, header)
 	if err != nil {
-
+		fmt.Println(NewHelper.MapError(code))
 	}
 	if code == 200 {
 		fmt.Println("Response: %s", string(response))
-
 	} else {
-		fmt.Println(helper.MapError(code))
+		fmt.Println(NewHelper.MapError(code))
 	}
 }
 
@@ -63,12 +62,13 @@ func ExamplePost() {
 	response, code, err := httpClient.Post(baseURL, header, payload)
 	if err != nil {
 
+		fmt.Println(NewHelper.MapError(code))
 	}
 	if code == 200 {
 		fmt.Println("Response: %s", string(response))
 
 	} else {
-		fmt.Println(helper.MapError(code))
+		fmt.Println(NewHelper.MapError(code))
 	}
 }
 
@@ -90,27 +90,28 @@ func ExampleCustomClient() {
 	response, code, err := httpClient.Get(baseURL, header)
 	if err != nil {
 
+		fmt.Println(NewHelper.MapError(code))
 	}
 	if code == 200 {
 		fmt.Println("Response: %s", string(response))
 
 	} else {
-		fmt.Println(helper.MapError(code))
+		fmt.Println(NewHelper.MapError(code))
 	}
 }
 
 func FuncSuccess(w http.ResponseWriter, r *http.Request) {
 	order := Order{}
 	order.Msisdn = "089526265660"
-	helper.ResponseWithJSON(w, 200, "Success Get Data", order)
+	NewHelper.ResponseWithJSON(w, 200, "Success Get Data", order)
 }
 
 func FuncFailed(w http.ResponseWriter, r *http.Request) {
 
-	helper.ResponseErrorWithJSON(w, helper.ErrBadRequest, "")
+	NewHelper.ResponseErrorWithJSON(w, NewHelper.ErrBadRequest, "")
 }
 
 func FuncFailedWithCustomeMessage(w http.ResponseWriter, r *http.Request) {
 
-	helper.ResponseErrorWithJSON(w, helper.ErrBadRequest, "Error With Custome Message")
+	NewHelper.ResponseErrorWithJSON(w, NewHelper.ErrBadRequest, "Error With Custome Message")
 }
