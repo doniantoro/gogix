@@ -106,8 +106,7 @@ func MapError(code int) error {
 
 }
 
-func ResponseErrorWithJSON(err error, message string) {
-	var w http.ResponseWriter
+func ResponseErrorWithJSON(w http.ResponseWriter, err error, message string) {
 
 	code := MapStatusCode(err)
 	if message == "" {
@@ -123,8 +122,7 @@ func ResponseErrorWithJSON(err error, message string) {
 	w.Write(response)
 }
 
-func ResponseWithJSON(code int, message string, payload interface{}) {
-	var w http.ResponseWriter
+func ResponseWithJSON(w http.ResponseWriter, code int, message string, payload interface{}) {
 
 	payload = domain.Response{
 		Status:  code,
