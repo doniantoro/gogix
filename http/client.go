@@ -3,11 +3,9 @@ package http
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -22,23 +20,23 @@ const (
 	MaxIdleConnections int  = 100
 	RequestTimeout     int  = 30
 	SSL                bool = true
-	// Header             http.Header = http.Header{}
 )
 
 func Header() http.Header {
 	return http.Header{}
 }
 func NewClient(timeout int) *Client {
-
-	timeoutConv, _ := time.ParseDuration(strconv.Itoa(123))
-	client := &http.Client{Timeout: timeoutConv * time.Second}
+	client := &http.Client{Timeout: time.Duration(timeout) * time.Second}
 
 	return &Client{client: client}
 }
+
+func CustomClient(client *http.Client) *Client {
+
+	return &Client{client: client}
+}
+
 func (c *Client) Get(url string, headers http.Header) ([]byte, int, error) {
-
-	fmt.Println(c.client)
-
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, 500, err
@@ -51,7 +49,6 @@ func (c *Client) Get(url string, headers http.Header) ([]byte, int, error) {
 
 func (c *Client) Post(url string, headers http.Header, payload interface{}) ([]byte, int, error) {
 
-	fmt.Println(c.client)
 	reqBody, err := json.Marshal(&payload)
 	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(reqBody))
 	if err != nil {
@@ -64,9 +61,29 @@ func (c *Client) Post(url string, headers http.Header, payload interface{}) ([]b
 }
 func (c *Client) Put(url string, headers http.Header, payload interface{}) ([]byte, int, error) {
 
-	fmt.Println(c.client)
 	reqBody, err := json.Marshal(&payload)
-	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(reqBody))
+	request, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(reqBody))
+	if err != nil {
+		return nil, 500, err
+	}
+	defer request.Body.Close()
+	request.Header = headers
+	return c.Do(request)
+}
+func (c *Client) Patch(url string, headers http.Header, payload interface{}) ([]byte, int, error) {
+
+	reqBody, err := json.Marshal(&payload)
+	request, err := http.NewRequest(http.MethodPatch, url, bytes.NewBuffer(reqBody))
+	if err != nil {
+		return nil, 500, err
+	}
+	defer request.Body.Close()
+	request.Header = headers
+
+	return c.Do(request)
+}
+func (c *Client) Delete(url string, headers http.Header) ([]byte, int, error) {
+	request, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		return nil, 500, err
 	}
@@ -79,6 +96,9 @@ func (c *Client) Put(url string, headers http.Header, payload interface{}) ([]by
 func (c *Client) Do(request *http.Request) ([]byte, int, error) {
 
 	resp, err := c.client.Do(request)
+	if err != nil {
+		return nil, 500, err
+	}
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
@@ -86,7 +106,6 @@ func (c *Client) Do(request *http.Request) ([]byte, int, error) {
 	}
 
 	io.Copy(ioutil.Discard, resp.Body)
-	// defer request.Body.Close()
 
 	return body, resp.StatusCode, nil
 }
