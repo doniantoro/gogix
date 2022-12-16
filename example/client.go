@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/doniantoro/gogix/NewHelper"
-	gogix "github.com/doniantoro/gogix/http"
+	gogix "github.com/doniantoro/gogix/NewHttp"
 	"github.com/gorilla/mux"
 )
 
