@@ -6,13 +6,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/doniantoro/gogix/NewHelper"
-	gogix "github.com/doniantoro/gogix/NewHttp"
-	"github.com/gorilla/mux"
+	"github.com/doniantoro/gogix"
 )
 
 const (
-	// baseURL = "http://localhost:3000/v3/digicore/check-coverage"
 	baseURL = "http://localhost:3013/order/omni/credit"
 )
 
@@ -26,14 +23,6 @@ func main() {
 	// ExampleCustomClient()
 	// ExampleCustomClient()
 
-	r := mux.NewRouter()
-	r.HandleFunc("/success", FuncSuccess).Methods("GET")
-	r.HandleFunc("/failed", FuncFailed).Methods("GET")
-	r.HandleFunc("/failed-message", FuncFailedWithCustomeMessage).Methods("GET")
-
-	http.Handle("/", r)
-	http.ListenAndServe(":8010", r)
-
 }
 
 func ExampleGet() {
@@ -42,12 +31,12 @@ func ExampleGet() {
 	header.Set("Content-Type", "application/json")
 	response, code, err := httpClient.Get(baseURL, header)
 	if err != nil {
-		fmt.Println(NewHelper.MapError(code))
+		fmt.Println(err)
 	}
 	if code == 200 {
-		fmt.Println("Response: %s", string(response))
+		fmt.Println(string(response))
 	} else {
-		fmt.Println(NewHelper.MapError(code))
+		fmt.Println(code)
 	}
 }
 
@@ -61,14 +50,12 @@ func ExamplePost() {
 
 	response, code, err := httpClient.Post(baseURL, header, payload)
 	if err != nil {
-
-		fmt.Println(NewHelper.MapError(code))
+		fmt.Println(err)
 	}
 	if code == 200 {
-		fmt.Println("Response: %s", string(response))
-
+		fmt.Println(string(response))
 	} else {
-		fmt.Println(NewHelper.MapError(code))
+		fmt.Println(code)
 	}
 }
 
@@ -89,29 +76,11 @@ func ExampleCustomClient() {
 	header.Set("Content-Type", "application/json")
 	response, code, err := httpClient.Get(baseURL, header)
 	if err != nil {
-
-		fmt.Println(NewHelper.MapError(code))
+		fmt.Println(err)
 	}
 	if code == 200 {
-		fmt.Println("Response: %s", string(response))
-
+		fmt.Println(string(response))
 	} else {
-		fmt.Println(NewHelper.MapError(code))
+		fmt.Println(code)
 	}
-}
-
-func FuncSuccess(w http.ResponseWriter, r *http.Request) {
-	order := Order{}
-	order.Msisdn = "089526265660"
-	NewHelper.ResponseWithJSON(w, 200, "Success Get Data", order)
-}
-
-func FuncFailed(w http.ResponseWriter, r *http.Request) {
-
-	NewHelper.ResponseErrorWithJSON(w, NewHelper.ErrBadRequest, "")
-}
-
-func FuncFailedWithCustomeMessage(w http.ResponseWriter, r *http.Request) {
-
-	NewHelper.ResponseErrorWithJSON(w, NewHelper.ErrBadRequest, "Error With Custome Message")
 }

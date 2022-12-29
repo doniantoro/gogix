@@ -1,4 +1,4 @@
-package Newhttp
+package gogix
 
 import (
 	"bytes"
@@ -46,13 +46,15 @@ func CustomClient(client *http.Client) *Client {
 // - Status code (status code of response end point that has type int)
 // - Error (Error response endpoint that has type error)
 func (c *Client) Get(url string, headers http.Header) ([]byte, int, error) {
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+
+	request, err := http.NewRequest(http.MethodGet, url, bytes.NewBuffer(nil))
 	if err != nil {
 		return nil, 500, err
 	}
 
 	request.Header = headers
 
+	defer request.Body.Close()
 	return c.Do(request)
 }
 
@@ -68,8 +70,8 @@ func (c *Client) Post(url string, headers http.Header, payload interface{}) ([]b
 	if err != nil {
 		return nil, 500, err
 	}
-	defer request.Body.Close()
 	request.Header = headers
+	defer request.Body.Close()
 
 	return c.Do(request)
 }
@@ -86,8 +88,8 @@ func (c *Client) Put(url string, headers http.Header, payload interface{}) ([]by
 	if err != nil {
 		return nil, 500, err
 	}
-	defer request.Body.Close()
 	request.Header = headers
+	defer request.Body.Close()
 	return c.Do(request)
 }
 
@@ -103,8 +105,8 @@ func (c *Client) Patch(url string, headers http.Header, payload interface{}) ([]
 	if err != nil {
 		return nil, 500, err
 	}
-	defer request.Body.Close()
 	request.Header = headers
+	defer request.Body.Close()
 
 	return c.Do(request)
 }
@@ -115,12 +117,15 @@ func (c *Client) Patch(url string, headers http.Header, payload interface{}) ([]
 // - Status code (status code of response end point that has type int)
 // - Error (Error response endpoint that has type error)
 func (c *Client) Delete(url string, headers http.Header) ([]byte, int, error) {
-	request, err := http.NewRequest(http.MethodDelete, url, nil)
+
+	request, err := http.NewRequest(http.MethodDelete, url, bytes.NewBuffer(nil))
+
 	if err != nil {
 		return nil, 500, err
 	}
-	defer request.Body.Close()
+
 	request.Header = headers
+	defer request.Body.Close()
 
 	return c.Do(request)
 }
