@@ -3,6 +3,7 @@ package gogix
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 
 type Client struct {
 	client *http.Client
+	Retry  int
 }
 
 const (
@@ -38,6 +40,10 @@ func NewClient(timeout int) *Client {
 func CustomClient(client *http.Client) *Client {
 
 	return &Client{client: client}
+}
+func (c *Client) WithRetry(retry int) *Client {
+	c.Retry = retry
+	return c
 }
 
 // This function is custom http client with method get  , with parameter url and header
@@ -131,8 +137,18 @@ func (c *Client) Delete(url string, headers http.Header) ([]byte, int, error) {
 }
 
 func (c *Client) Do(request *http.Request) ([]byte, int, error) {
+	var resp *http.Response
+	var err error
+	for c.Retry > 0 {
+		resp, err = c.client.Do(request)
 
-	resp, err := c.client.Do(request)
+		if err != nil {
+			c.Retry--
+			fmt.Println(c.Retry)
+		} else {
+			break
+		}
+	}
 	if err != nil {
 		return nil, 500, err
 	}

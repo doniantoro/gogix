@@ -27,6 +27,8 @@ func main() {
 
 func ExampleGet() {
 	httpClient := gogix.NewClient(20)
+	httpClient.WithRetry(10)
+
 	header := gogix.Header()
 	header.Set("Content-Type", "application/json")
 	response, code, err := httpClient.Get(baseURL, header)
